@@ -1,5 +1,6 @@
 import app from "./src/app";
+import { config } from "./src/config/config";
 
-app.listen(process.env.PORT || 4000, () => {
-  console.log("Server Started");
+app.listen(config.port || 3000, () => {
+  console.log("Server Started on " + config.port);
 });
