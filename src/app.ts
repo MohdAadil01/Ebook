@@ -1,15 +1,14 @@
 import express, { NextFunction, Request, Response } from "express";
-
 import globalErrorHandler from "./middlewares/globalErrorHandler";
-import createHttpError from "http-errors";
+import userRoute from "./routes/userRoutes";
 
 const app = express();
 
 app.get("/", (req, res) => {
-  const err = createHttpError("error");
-  throw err;
   res.json({ message: "First Route" });
 });
+
+app.use("/api/users", userRoute);
 
 // GLOBAL ERROR HANDLER
 app.use(globalErrorHandler);
