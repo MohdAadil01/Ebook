@@ -20,7 +20,14 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
 
   // ENCRYPT PASSWORD
   const hashedPassword = await bcrypt.hash(password, 8);
-  res.json({ message: "Created" });
+
+  const newUser = await User.create({
+    name,
+    email,
+    password: hashedPassword,
+  });
+
+  res.json({ message: "User Created Successfully", _id: newUser._id });
 };
 
 export { createUser };
