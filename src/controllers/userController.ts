@@ -49,7 +49,7 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
       { expiresIn: "2d" }
     );
     // !SEND RESPONSE BACK TO CLIENT
-    res.json({
+    res.status(201).json({
       message: "User Created Successfully",
       _id: newUser._id,
       accessToken,
