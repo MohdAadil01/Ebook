@@ -14,36 +14,49 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
     return next(error);
   }
 
-  const user = User.findOne({ email });
-  if (!user) {
-    const error = createHttpError("User already exists. Please Login");
-    return next(error);
+  try {
+    const user = await User.findOne({ email });
+    if (user) {
+      const error = createHttpError(400, "User already exists. Please Login");
+      return next(error);
+    }
+  } catch (error) {
+    return next(
+      createHttpError(500, "Error in finding user in database" + error)
+    );
   }
 
   //! ENCRYPT PASSWORD
   const hashedPassword = await bcrypt.hash(password, 8);
 
   //! SAVE TO DATABASE
-  const newUser = await User.create({
-    name,
-    email,
-    password: hashedPassword,
-  });
+  let newUser: User;
+  try {
+    newUser = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+    });
+  } catch (error) {
+    return next(createHttpError(500, "Error in creating user " + error));
+  }
 
   // !GENERATE JWT TOKEN
-
-  const accessToken = jwt.sign(
-    { sub: newUser._id },
-    config.jwtSecret as string,
-    { expiresIn: "2d" }
-  );
-
-  // !SEND RESPONSE BACK TO CLIENT
-  res.json({
-    message: "User Created Successfully",
-    _id: newUser._id,
-    accessToken,
-  });
+  try {
+    const accessToken = jwt.sign(
+      { sub: newUser._id },
+      config.jwtSecret as string,
+      { expiresIn: "2d" }
+    );
+    // !SEND RESPONSE BACK TO CLIENT
+    res.json({
+      message: "User Created Successfully",
+      _id: newUser._id,
+      accessToken,
+    });
+  } catch (error) {
+    return next(createHttpError(500, "Error in signing jwt token " + error));
+  }
 };
 
 export { createUser };
