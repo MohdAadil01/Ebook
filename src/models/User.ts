@@ -1,11 +1,5 @@
 import mongoose, { mongo } from "mongoose";
-
-interface User {
-  _id: string;
-  name: string;
-  email: string;
-  password: string;
-}
+import { User } from "./userTypes";
 
 const userSchema = new mongoose.Schema<User>(
   {
