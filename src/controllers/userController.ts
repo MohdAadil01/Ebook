@@ -5,7 +5,11 @@ import User from "../models/User";
 import jwt from "jsonwebtoken";
 import { config } from "../config/config";
 
-const createUser = async (req: Request, res: Response, next: NextFunction) => {
+const registerUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { name, email, password } = req.body;
 
   //! VALIDATION
@@ -59,4 +63,52 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export { createUser };
+const loginUser = async (req: Request, res: Response, next: NextFunction) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return next(createHttpError(400, "All fields are required"));
+  }
+  const user = await User.findOne({ email });
+  try {
+    if (!user) {
+      return next(createHttpError(400, "User does not exist"));
+    }
+  } catch (error) {
+    return next(
+      createHttpError(500, "Error in finding user in database " + error)
+    );
+  }
+
+  try {
+    const isPasswordMatch = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordMatch) {
+      return next(createHttpError(400, "Invalid Credentials"));
+    }
+  } catch (error) {
+    return next(
+      createHttpError(
+        500,
+        "Error in matching user creadentials in  database " + error
+      )
+    );
+  }
+
+  try {
+    const accessToken = jwt.sign(
+      { sub: user._id },
+      config.jwtSecret as string,
+      {
+        expiresIn: "2d",
+      }
+    );
+
+    res
+      .status(200)
+      .json({ message: "Successfully logged in", user: user._id, accessToken });
+  } catch (error) {
+    return next(createHttpError(500, "Error in signing access token " + error));
+  }
+};
+
+export { registerUser, loginUser };
