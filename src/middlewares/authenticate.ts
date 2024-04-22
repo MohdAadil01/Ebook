@@ -19,11 +19,11 @@ const authenticate = (req: Request, res: Response, next: NextFunction) => {
     const _req = req as AuthRequest;
     _req.userId = decoded.sub as string;
 
-    console.log(decoded);
+    // console.log(decoded);
 
     next();
   } catch (error) {
-    return next(createHttpError(500, "Authorization token expired"));
+    return next(createHttpError(500, "Authorization token invalid."));
   }
 };
 
