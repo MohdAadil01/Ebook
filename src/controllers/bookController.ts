@@ -27,8 +27,29 @@ export const createBook = async (
     });
     console.log(uploadResult);
 
+    const bookFileName = files.file[0].filename;
+    const bookFilePath = path.resolve(
+      __dirname,
+      "../public/data/uploads",
+      bookFileName
+    );
+    const fileMimeType = files.file[0].mimetype;
+
+    const bookFileUploadResult = await cloudinary.uploader.upload(
+      bookFilePath,
+      {
+        resource_type: "raw",
+        filename_override: bookFileName,
+        folder: "book-pdfs",
+        format: "pdf",
+      }
+    );
+
+    console.log(bookFileUploadResult);
+
     res.send("hi");
   } catch (error) {
     console.log(error);
+    return next(createHttpError(500, "Error while uploading files"));
   }
 };
