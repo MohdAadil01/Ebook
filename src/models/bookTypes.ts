@@ -2,7 +2,7 @@ import { User } from "./userTypes";
 
 export interface Book {
   _id: string;
-  titile: string;
+  title: string;
   author: User;
   genre: string;
   coverImage: string;
