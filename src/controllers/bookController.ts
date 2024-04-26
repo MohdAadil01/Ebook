@@ -71,3 +71,23 @@ export const createBook = async (
     return next(createHttpError(500, "Error while uploading files"));
   }
 };
+
+export const updateBook = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { title, genre } = req.body;
+  const bookId = req.params.bookId;
+  const foundBook = await Book.findOne({ _id: bookId });
+  if (!foundBook) {
+    return next(createHttpError(404, "Book Not Found."));
+  }
+  let _req = req as AuthRequest;
+  if (foundBook.author.toString() !== _req.userId) {
+    return next(
+      createHttpError(404, "You are not allowed to update this book.")
+    );
+  }
+  res.send("hi");
+};
