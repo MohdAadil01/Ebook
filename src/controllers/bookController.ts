@@ -188,3 +188,46 @@ export const getSingleBook = async (
     return next(createHttpError(500, "Error while getting a book."));
   }
 };
+
+export const deleteBook = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const bookId = req.params.bookId;
+    const foundBook = await Book.findOne({ _id: bookId });
+    if (!foundBook) {
+      return next(createHttpError(400, "No book found."));
+    }
+    let _req = req as AuthRequest;
+    if (foundBook.author.toString() !== _req.userId) {
+      return next(
+        createHttpError(400, "You are not allowed to delete this book.")
+      );
+    }
+
+    let coverImageSplits = foundBook.coverImage.split("/");
+    let coverImagepublicId =
+      coverImageSplits.at(-2) +
+      "/" +
+      coverImageSplits.at(-1)?.split(".").at(-2);
+
+    let fileSplits = foundBook.file.split("/");
+    let filePublicId =
+      fileSplits.at(-2) + "/" + fileSplits.at(-1)?.split(".").at(-2);
+    console.log(filePublicId);
+
+    await cloudinary.uploader.destroy(coverImagepublicId);
+    await cloudinary.uploader.destroy(filePublicId, { resource_type: "raw" });
+
+    const deletedBook = await Book.findOneAndDelete({ _id: bookId });
+
+    res.status(200).json({
+      message: "Successfully deleted the book",
+      name: deletedBook?.title,
+    });
+  } catch (error) {
+    return next(createHttpError(500, "Error in deleting book."));
+  }
+};
