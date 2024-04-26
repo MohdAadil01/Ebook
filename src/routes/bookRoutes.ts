@@ -1,5 +1,9 @@
 import express from "express";
-import { createBook, updateBook } from "../controllers/bookController";
+import {
+  createBook,
+  updateBook,
+  getAllBooks,
+} from "../controllers/bookController";
 import multer from "multer";
 import path from "path";
 import authenticate from "../middlewares/authenticate";
@@ -29,4 +33,6 @@ router.put(
   ]),
   updateBook
 );
+
+router.get("/", getAllBooks);
 export default router;

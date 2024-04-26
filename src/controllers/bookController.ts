@@ -156,3 +156,18 @@ export const updateBook = async (
     return next(createHttpError(500, "Error while updating book."));
   }
 };
+
+export const getAllBooks = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    // !Add pagination
+    const allBooks = await Book.find({});
+
+    res.status(200).json({ allBooks });
+  } catch (error) {
+    return next(createHttpError(500, "Error while getting books."));
+  }
+};
