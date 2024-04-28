@@ -105,7 +105,7 @@ const loginUser = async (req: Request, res: Response, next: NextFunction) => {
 
     res
       .status(200)
-      .json({ message: "Successfully logged in", user: user._id, accessToken });
+      .json({ message: "Successfully logged in", _id: user._id, accessToken });
   } catch (error) {
     return next(createHttpError(500, "Error in signing access token " + error));
   }
