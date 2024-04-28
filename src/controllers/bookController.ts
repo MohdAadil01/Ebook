@@ -164,7 +164,7 @@ export const getAllBooks = async (
 ) => {
   try {
     // !Add pagination
-    const allBooks = await Book.find({});
+    const allBooks = await Book.find({}).populate("author");
 
     res.status(200).json({ allBooks });
   } catch (error) {
@@ -179,7 +179,7 @@ export const getSingleBook = async (
 ) => {
   try {
     const bookId = req.params.bookId;
-    const foundBook = await Book.findOne({ _id: bookId });
+    const foundBook = await Book.findOne({ _id: bookId }).populate("author");
     if (!foundBook) {
       return next(createHttpError(400, "No book found with this name/id."));
     }
