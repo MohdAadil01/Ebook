@@ -13,7 +13,6 @@ export const createBook = async (
 ) => {
   try {
     const { title, genre } = req.body;
-    // console.log(req.files);
     const files = req.files as { [fieldName: string]: Express.Multer.File[] };
 
     const coverImageMimeType = files.coverImage[0].mimetype.split("/").at(-1);
@@ -181,9 +180,12 @@ export const getSingleBook = async (
     const bookId = req.params.bookId;
     const foundBook = await Book.findOne({ _id: bookId }).populate("author");
     if (!foundBook) {
-      return next(createHttpError(400, "No book found with this name/id."));
+      // return next(createHttpError(400, "No book found with this name/id."));
+      return res.json({ message: "no book found with this id" });
     }
-    res.status(200).json({ message: "Book found", foundBook });
+    res
+      .status(200)
+      .json({ message: "Book found", foundBook, author: foundBook.author });
   } catch (error) {
     return next(createHttpError(500, "Error while getting a book."));
   }
