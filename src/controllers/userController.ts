@@ -49,8 +49,7 @@ const registerUser = async (
   try {
     const accessToken = jwt.sign(
       { sub: newUser._id },
-      config.jwtSecret as string,
-      { expiresIn: "2d" }
+      config.jwtSecret as string
     );
     // !SEND RESPONSE BACK TO CLIENT
     res.status(201).json({
@@ -95,13 +94,7 @@ const loginUser = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   try {
-    const accessToken = jwt.sign(
-      { sub: user._id },
-      config.jwtSecret as string,
-      {
-        expiresIn: "2d",
-      }
-    );
+    const accessToken = jwt.sign({ sub: user._id }, config.jwtSecret as string);
 
     res
       .status(200)
