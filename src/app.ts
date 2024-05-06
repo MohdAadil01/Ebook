@@ -5,11 +5,7 @@ import userRoutes from "./routes/userRoutes";
 import bookRoutes from "./routes/bookRoutes";
 import { config } from "./config/config";
 const app = express();
-app.use(
-  cors({
-    origin: config.frontendDomain,
-  })
-);
+app.use(cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
